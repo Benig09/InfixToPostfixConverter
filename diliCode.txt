@@ -1,0 +1,108 @@
+
+import java.util.Scanner;
+
+public class InfixToPostfixConverter{  
+	public int Precedence(char ch) 
+	{ 
+		switch (ch) 
+		{ 
+		case '+': 
+		case '-': 
+			return 1; 
+	
+		case '*': 
+		case '/': 
+			return 2; 
+	
+		case '^': 
+			return 3; 
+		} 
+		return -1; 
+	}
+        
+	// The main function to convert infix expression 
+        //to postfix expression 
+	public String convertToPostfix(String expression) 
+	{ 
+                // initializing empty String for result 
+		String result = new String(""); 
+                // initializing empty stack 
+		Stack stack = new Stack(expression.length()); 
+		for (int i = 0; i<expression.length(); ++i) 
+		{
+                    char c = expression.charAt(i);
+                    // If the scanned character is an operand, add it to output. 
+			if (Character.isLetterOrDigit(c)) 
+				result += c;  
+                    // If the scanned character is an '(', push it to the stack. 
+			else if (c == '(') 
+				stack.push(c); 
+                        
+                    //  If the scanned character is an ')', pop and output from the stack  
+                    // until an '(' is encountered.
+			else if (c == ')') 
+			{ 
+                            while (!stack.isEmpty() && stack.peek() != '(') 
+				result += stack.pop(); 
+				
+				if (!stack.isEmpty() && stack.peek() != '(') 
+                                    return "Invalid Expression"; // invalid expression				 
+				else
+                                    stack.pop(); 
+			} 
+			else // an operator is encountered 
+			{ 
+                            while (!stack.isEmpty() && Precedence(c) <= Precedence(stack.peek())){ 
+                                if(stack.peek() == '(') 
+                                return "Invalid Expression"; 
+                                result += stack.pop(); 
+			} 
+				stack.push(c); 
+			} 
+	
+		} 
+	
+		// pop all the operators from the stack 
+		while (!stack.isEmpty()){ 
+                    if(stack.peek() == '(') 
+                        return "Invalid Expression"; 
+                        result += stack.pop(); 
+		}
+		return result; 
+	} 
+        
+        // Driver method
+	public static void main(String[] args) 
+	{ 
+            Scanner sc=new Scanner(System.in);
+            System.out.println("Enter the Value: ");
+            String exp=sc.next();
+            InfixToPostfixConverter ic=new InfixToPostfixConverter();
+		//String exp = "(6+2)*5-8/4"; 
+		System.out.println(ic.convertToPostfix(exp));
+        }
+        
+class Stack{
+      private int maxSize;
+      private char[] stackArray;
+      private int top;
+      
+      public Stack(int max) {
+         maxSize = max;
+         stackArray = new char[maxSize];
+         top = -1;
+      }
+      public void push(char j) {
+         stackArray[++top] = j;
+      }
+      public char pop() {
+         return stackArray[top--];
+      }
+      public char peek() {
+         return stackArray[top];
+      }
+      public boolean isEmpty() {
+         return (top == -1);
+      }
+   }
+} 
